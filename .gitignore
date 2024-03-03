@@ -1,0 +1,12 @@
+# Rust stuff
+/target
+/Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# IDEA stuff
+/.idea
+
+# Local build stuff
+/save/
+/settings.json
