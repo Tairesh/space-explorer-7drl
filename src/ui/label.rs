@@ -1,5 +1,5 @@
 use tetra::graphics::text::{Font, Text};
-use tetra::graphics::{Color, DrawParams, Rectangle};
+use tetra::graphics::{Color, DrawParams};
 use tetra::Context;
 
 use super::UiPosition;
@@ -9,7 +9,7 @@ pub struct Label {
     text: Text,
     color: Color,
     position: UiPosition,
-    bounds: Rectangle,
+    bounds: (f32, f32),
 }
 
 impl Label {
@@ -26,7 +26,7 @@ impl Label {
             text,
             color,
             position,
-            bounds,
+            bounds: (bounds.width, bounds.height),
         }
     }
 

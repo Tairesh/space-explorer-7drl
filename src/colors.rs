@@ -10,3 +10,5 @@ pub const DARKEST_GRAY: Color = Color::rgb(0.043, 0.043, 0.043);
 pub const LIGHT_STEEL_BLUE: Color = Color::rgb(0.69, 0.77, 0.87);
 pub const STEEL_GRAY: Color = Color::rgb(0.43, 0.47, 0.53);
 pub const LIME_GREEN: Color = Color::rgb(0.196, 0.804, 0.196);
+pub const WHITE: Color = Color::rgb(1.0, 1.0, 1.0);
+pub const BLACK: Color = Color::rgb(0.0, 0.0, 0.0);

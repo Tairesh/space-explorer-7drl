@@ -33,7 +33,7 @@ impl ShipPartView for Frame {
 }
 
 impl ShipPartInteract for Frame {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         true
     }
 }
@@ -104,7 +104,7 @@ impl ShipPartView for Wing {
 }
 
 impl ShipPartInteract for Wing {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         true
     }
 }
@@ -197,7 +197,7 @@ impl ShipPartView for Wall {
 }
 
 impl ShipPartInteract for Wall {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         false
     }
 }
@@ -234,7 +234,7 @@ impl ShipPartView for Roof {
 }
 
 impl ShipPartInteract for Roof {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         true
     }
 }
@@ -267,7 +267,7 @@ impl ShipPartView for Floor {
 }
 
 impl ShipPartInteract for Floor {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         true
     }
 }
@@ -316,7 +316,7 @@ impl ShipPartView for Door {
 }
 
 impl ShipPartInteract for Door {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         self.open
     }
 
@@ -383,7 +383,7 @@ impl ShipPartView for Seat {
 }
 
 impl ShipPartInteract for Seat {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         true
     }
 }
@@ -417,7 +417,7 @@ impl ShipPartView for Terminal {
 }
 
 impl ShipPartInteract for Terminal {
-    fn passage(&self) -> bool {
+    fn is_walkable(&self) -> bool {
         false
     }
 

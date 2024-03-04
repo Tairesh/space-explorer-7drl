@@ -11,6 +11,7 @@ mod colors;
 mod cp437;
 mod data;
 mod game;
+mod input;
 mod map;
 mod states;
 mod ui;

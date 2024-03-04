@@ -1,8 +1,10 @@
+use bracket_pathfinding::prelude::{Algorithm2D, BaseMap};
 use geometry::Point;
 use serde::{Deserialize, Serialize};
 
 use crate::data::ship_class::ShipClass;
 use crate::data::ship_parts::{Activation, ShipPart, ShipPartInteract, ShipPartView};
+use crate::ui::Tile;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ShipTile {
@@ -18,8 +20,10 @@ impl ShipTile {
         self.parts.iter().filter(|p| !p.is_roof()).max()
     }
 
-    pub fn passage(&self) -> bool {
-        self.top_part().map(ShipPart::passage).unwrap_or(true)
+    pub fn is_walkable(&self) -> bool {
+        self.top_part()
+            .map(ShipPartInteract::is_walkable)
+            .unwrap_or(true)
     }
 
     pub fn supports_action(&self, action: Activation) -> bool {
@@ -41,6 +45,16 @@ impl ShipTile {
 
     pub fn is_transparent(&self) -> bool {
         self.parts.iter().all(ShipPart::is_transparent)
+    }
+}
+
+impl From<&ShipTile> for Tile {
+    fn from(tile: &ShipTile) -> Self {
+        if let Some(top_part) = tile.top_part() {
+            top_part.tile()
+        } else {
+            Tile::empty()
+        }
     }
 }
 
@@ -81,12 +95,14 @@ impl Ship {
     }
 }
 
-// impl FovMap for Ship {
-//     fn dimensions(&self) -> Point {
-//         self.bounds.into()
-//     }
-//
-//     fn is_opaque(&self, idx: usize) -> bool {
-//         !self.tiles[idx].is_transparent()
-//     }
-// }
+impl BaseMap for Ship {
+    fn is_opaque(&self, idx: usize) -> bool {
+        !self.tiles[idx].is_transparent()
+    }
+}
+
+impl Algorithm2D for Ship {
+    fn dimensions(&self) -> bracket_pathfinding::prelude::Point {
+        self.bounds.into()
+    }
+}

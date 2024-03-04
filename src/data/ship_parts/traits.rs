@@ -25,7 +25,7 @@ pub trait ShipPartView {
 
 #[enum_dispatch(ShipPart)]
 pub trait ShipPartInteract {
-    fn passage(&self) -> bool;
+    fn is_walkable(&self) -> bool;
     fn supported_actions(&self) -> &[Activation] {
         &[]
     }

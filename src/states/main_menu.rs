@@ -1,11 +1,12 @@
-use std::rc::Rc;
-
-use tetra::Context;
+use tetra::input::Key;
+use tetra::{Context, Event};
 
 use crate::assets::Assets;
 use crate::colors;
-use crate::game::GameState;
+use crate::game::ChangeState;
 use crate::ui::{Label, UiPosition};
+
+use super::State;
 
 #[derive(Debug)]
 pub struct MainMenu {
@@ -13,7 +14,7 @@ pub struct MainMenu {
 }
 
 impl MainMenu {
-    pub fn new(ctx: &mut Context, assets: Rc<Assets>) -> tetra::Result<Self> {
+    pub fn new(ctx: &mut Context, assets: &Assets) -> Self {
         let logo = Label::new(
             ctx,
             assets.fonts.logo.font.clone(),
@@ -48,23 +49,29 @@ impl MainMenu {
             colors::ORANGE_RED,
             UiPosition::TopCenter { margin_top: 400.0 },
         );
-        Ok(Self {
+        Self {
             labels: [logo, version, copyright, help],
-        })
-    }
-
-    pub fn update(&mut self, ctx: &mut Context) -> Option<GameState> {
-        if tetra::input::is_key_pressed(ctx, tetra::input::Key::Q) {
-            return Some(GameState::Exit);
         }
-
-        None
     }
+}
 
-    pub fn draw(&mut self, ctx: &mut Context) {
+impl tetra::State for MainMenu {
+    fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         tetra::graphics::clear(ctx, colors::SPACE_VIOLET);
         for label in &mut self.labels {
             label.draw(ctx);
+        }
+
+        Ok(())
+    }
+}
+
+impl State for MainMenu {
+    fn event(&mut self, _ctx: &mut Context, event: Event) -> Option<ChangeState> {
+        match event {
+            Event::KeyPressed { key: Key::Q } => Some(ChangeState::Exit),
+            Event::KeyPressed { key: Key::Enter } => Some(ChangeState::LoadShipWalk),
+            _ => None,
         }
     }
 }
