@@ -4,12 +4,14 @@ use tetra::{
     ContextBuilder,
 };
 
-use crate::game::Game;
+use game::Game;
 
 mod assets;
 mod colors;
 mod cp437;
+mod data;
 mod game;
+mod map;
 mod states;
 mod ui;
 
