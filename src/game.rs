@@ -1,31 +1,48 @@
-use tetra::input::Key;
-use tetra::{graphics, input, Context, State};
+use std::rc::Rc;
 
-use crate::colors;
+use tetra::{Context, State};
 
-enum GameState {
-    MainMenu,
+use crate::assets::Assets;
+use crate::states::MainMenu;
+
+#[derive(Debug)]
+pub enum GameState {
+    MainMenu(MainMenu),
     Exit,
 }
 
+impl GameState {
+    pub fn draw(&mut self, ctx: &mut Context) {
+        match self {
+            GameState::MainMenu(main_menu) => {
+                main_menu.draw(ctx);
+            }
+            _ => {}
+        }
+    }
+}
+
 pub struct Game {
+    assets: Rc<Assets>,
     state: GameState,
 }
 
 impl Game {
-    pub fn new(_ctx: &mut Context) -> tetra::Result<Self> {
+    pub fn new(ctx: &mut Context) -> tetra::Result<Self> {
+        let assets = Rc::new(Assets::load(ctx)?);
         Ok(Self {
-            state: GameState::MainMenu,
+            state: GameState::MainMenu(MainMenu::new(ctx, assets.clone())?),
+            assets,
         })
     }
 }
 
 impl State for Game {
     fn update(&mut self, ctx: &mut Context) -> tetra::Result {
-        match self.state {
-            GameState::MainMenu => {
-                if input::is_key_pressed(ctx, Key::Q) {
-                    self.state = GameState::Exit;
+        match &mut self.state {
+            GameState::MainMenu(main_menu) => {
+                if let Some(state) = main_menu.update(ctx) {
+                    self.state = state;
                 }
             }
             GameState::Exit => {
@@ -36,7 +53,7 @@ impl State for Game {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
-        graphics::clear(ctx, colors::SPACE_VIOLET);
+        self.state.draw(ctx);
         Ok(())
     }
 }
