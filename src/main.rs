@@ -13,8 +13,9 @@ mod data;
 mod game;
 mod input;
 mod map;
-mod states;
+mod scenes;
 mod ui;
+mod world;
 
 const TITLE: &str = "Space Explorer 7DRL";
 const VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));

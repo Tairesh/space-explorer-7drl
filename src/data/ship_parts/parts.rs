@@ -304,7 +304,7 @@ impl ShipPartView for Door {
         if self.open {
             Tile::with_floor('.', colors::LIGHT_STEEL_BLUE)
         } else if self.locked {
-            Tile::new('≡', colors::LIGHT_STEEL_BLUE, Some(colors::ORANGE_RED))
+            Tile::with_floor('≡', colors::ORANGE_RED)
         } else {
             Tile::with_floor('≡', colors::LIGHT_STEEL_BLUE)
         }

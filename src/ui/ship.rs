@@ -11,7 +11,7 @@ use crate::assets::{Assets, TileSet};
 use crate::colors;
 use crate::map::{Player, Ship};
 
-use super::{Tile, Zoom};
+use super::{Tile, UiSprite, Zoom};
 
 #[derive(Debug)]
 pub struct ShipView {
@@ -19,7 +19,8 @@ pub struct ShipView {
     assets: Rc<Assets>,
     player: Rc<RefCell<Player>>,
     ship: Rc<RefCell<Ship>>,
-    zoom: Zoom,
+    pos: Option<Vec2>,
+    pub zoom: Zoom,
 }
 
 impl ShipView {
@@ -37,21 +38,8 @@ impl ShipView {
             player,
             ship,
             zoom,
+            pos: None,
         }
-    }
-
-    pub fn draw(&self, ctx: &mut Context) {
-        let (w, h) = tetra::window::get_size(ctx);
-        let mut pos = Vec2::new(w as f32 / 2.0, h as f32 / 2.0);
-        pos -= Vec2::new(
-            TileSet::TILE_SIZE.0 as f32 / 2.0,
-            TileSet::TILE_SIZE.1 as f32 / 2.0,
-        ) * self.zoom.asf32();
-        pos -= Vec2::from(self.player.borrow().pos * TileSet::TILE_SIZE) * self.zoom.asf32();
-        self.canvas.draw(
-            ctx,
-            DrawParams::new().position(pos).scale(self.zoom.as_scale()),
-        );
     }
 
     pub fn update(&mut self, ctx: &mut Context) {
@@ -61,6 +49,7 @@ impl ShipView {
             &self.player.borrow(),
             &self.assets.tileset,
         );
+        self.positionate(ctx, tetra::window::get_size(ctx));
     }
 
     pub fn inc_zoom(&mut self, ctx: &mut Context) {
@@ -71,6 +60,32 @@ impl ShipView {
     pub fn dec_zoom(&mut self, ctx: &mut Context) {
         self.zoom.dec();
         self.update(ctx);
+    }
+}
+
+impl UiSprite for ShipView {
+    fn positionate(&mut self, _ctx: &mut Context, window_size: (i32, i32)) {
+        let (w, h) = window_size;
+        let mut pos = Vec2::new(w as f32 / 2.0, h as f32 / 2.0);
+        pos -= Vec2::new(
+            TileSet::TILE_SIZE.0 as f32 / 2.0,
+            TileSet::TILE_SIZE.1 as f32 / 2.0,
+        ) * self.zoom.asf32();
+        pos -= Vec2::from(self.player.borrow().pos * TileSet::TILE_SIZE) * self.zoom.asf32();
+        self.pos = Some(pos);
+    }
+
+    fn draw(&mut self, ctx: &mut Context) {
+        self.canvas.draw(
+            ctx,
+            DrawParams::new()
+                .position(self.pos.unwrap())
+                .scale(self.zoom.as_scale()),
+        );
+    }
+
+    fn as_ship_view(&mut self) -> Option<&mut ShipView> {
+        Some(self)
     }
 }
 

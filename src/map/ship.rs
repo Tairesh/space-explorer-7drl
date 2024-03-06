@@ -58,14 +58,12 @@ impl From<&ShipTile> for Tile {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ship {
     pub name: String,
     pub class_name: String,
     pub tiles: Vec<ShipTile>,
     pub bounds: (i32, i32),
-    // pub squawk: Squawk,  // TODO: implement squawk code (as Part)
 }
 
 impl Ship {

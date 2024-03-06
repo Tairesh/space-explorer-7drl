@@ -3,27 +3,23 @@ use tetra::{Context, Event};
 
 use crate::assets::Assets;
 use crate::colors;
-use crate::game::ChangeState;
-use crate::ui::{Label, UiPosition};
+use crate::ui::{Label, UiPosition, UiSprite};
 
-use super::State;
+use super::{Scene, SceneEvent, SceneImpl};
 
-#[derive(Debug)]
 pub struct MainMenu {
-    labels: [Label; 4],
+    sprites: [Box<dyn UiSprite>; 4],
 }
 
 impl MainMenu {
-    pub fn new(ctx: &mut Context, assets: &Assets) -> Self {
+    pub fn new(assets: &Assets) -> Self {
         let logo = Label::new(
-            ctx,
             assets.fonts.logo.font.clone(),
             crate::TITLE,
             colors::ORANGE,
             UiPosition::TopCenter { margin_top: 20.0 },
         );
         let version = Label::new(
-            ctx,
             assets.fonts.consolab14.font.clone(),
             crate::VERSION,
             colors::ORANGE,
@@ -33,7 +29,6 @@ impl MainMenu {
             },
         );
         let copyright = Label::new(
-            ctx,
             assets.fonts.consolab14.font.clone(),
             "by Tairesh",
             colors::ORANGE,
@@ -43,35 +38,40 @@ impl MainMenu {
             },
         );
         let help = Label::new(
-            ctx,
             assets.fonts.handel24.font.clone(),
             "Press [Enter] to start, [Q] to exit",
             colors::ORANGE_RED,
             UiPosition::TopCenter { margin_top: 400.0 },
         );
         Self {
-            labels: [logo, version, copyright, help],
+            sprites: [
+                Box::new(logo),
+                Box::new(version),
+                Box::new(copyright),
+                Box::new(help),
+            ],
         }
     }
 }
 
-impl tetra::State for MainMenu {
-    fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
-        tetra::graphics::clear(ctx, colors::SPACE_VIOLET);
-        for label in &mut self.labels {
-            label.draw(ctx);
-        }
-
-        Ok(())
-    }
-}
-
-impl State for MainMenu {
-    fn event(&mut self, _ctx: &mut Context, event: Event) -> Option<ChangeState> {
+impl SceneImpl for MainMenu {
+    fn on_event(&mut self, _ctx: &mut Context, event: Event) -> Option<SceneEvent> {
         match event {
-            Event::KeyPressed { key: Key::Q } => Some(ChangeState::Exit),
-            Event::KeyPressed { key: Key::Enter } => Some(ChangeState::LoadShipWalk),
+            Event::KeyPressed { key: Key::Q } => Some(SceneEvent::Exit),
+            Event::KeyPressed { key: Key::Enter } => Some(SceneEvent::ChangeScene(Scene::ShipWalk)),
             _ => None,
         }
+    }
+
+    fn before_draw(&mut self, ctx: &mut Context) {
+        tetra::graphics::clear(ctx, colors::SPACE_VIOLET);
+    }
+
+    fn ui_sprites(&self) -> Option<&[Box<dyn UiSprite>]> {
+        Some(&self.sprites)
+    }
+
+    fn ui_sprites_mut(&mut self) -> Option<&mut [Box<dyn UiSprite>]> {
+        Some(&mut self.sprites)
     }
 }
